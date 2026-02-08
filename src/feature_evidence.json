@@ -1,0 +1,43 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-replace-the-current-coingecko-market-data-fetch-with-an-alternative-public-cryptocurrency-market-data-rest-api-that-does-not-require-an-api-key-while-keeping-the-dashboard-behavior-the-same-top-50-by-market-cap-prices-in-eur-refresh-every-5-seconds-update-the-data-mapping-layer-so-the-ui-continues-to-receive-the-existing-cryptoasset-fields-used-by-cryptodashboard-id-symbol-name-current-price-market-cap-market-cap-rank-price-change-percentage-24h-total-volume-image",
+      "featureTitle": "Replace the current CoinGecko market data fetch with an alternative public cryptocurrency market data REST API that does not require an API key, while keeping the dashboard behavior the same (top 50 by market cap, prices in EUR, refresh every 5 seconds). Update the data-mapping layer so the UI continues to receive the existing `CryptoAsset` fields used by `CryptoDashboard` (id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image).",
+      "files": [
+        "frontend/src/features/crypto/useCryptoMarketData.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-user-facing-dark-mode-toggle-to-the-dashboard-ui-and-implement-theme-switching-using-tailwind-s-class-based-dark-mode-toggling-the-dark-class-on-the-document-root-persist-the-user-s-preference-across-reloads-e-g-localstorage-and-ensure-all-user-facing-labels-for-the-toggle-are-in-english",
+      "featureTitle": "Add a user-facing Dark Mode toggle to the dashboard UI and implement theme switching using Tailwind's class-based dark mode (toggling the `dark` class on the document root). Persist the user's preference across reloads (e.g., localStorage) and ensure all user-facing labels for the toggle are in English.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/ThemeToggle.tsx",
+        "frontend/src/hooks/useTheme.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

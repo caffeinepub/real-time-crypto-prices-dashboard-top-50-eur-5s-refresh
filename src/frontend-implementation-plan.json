@@ -1,0 +1,53 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Swap CoinGecko market feed provider and add persistent Dark Mode toggle",
+  "requirements": [
+    {
+      "id": "REQ-8",
+      "summary": "Replace CoinGecko market data fetching with an alternative no-key public REST API while keeping the `CryptoAsset` shape, top-50-by-market-cap EUR pricing, and 5s auto-refresh behavior unchanged.",
+      "acceptanceCriteria": [
+        "The app no longer calls the CoinGecko market URL `https://api.coingecko.com/api/v3/coins/markets`.",
+        "Market data loads successfully without requiring any API key configuration.",
+        "The table still displays 50 assets ranked by market cap, with prices shown in EUR, and continues auto-refreshing every 5 seconds.",
+        "`CryptoDashboard` renders without code changes needed for renamed/missing fields (i.e., the hook returns data shaped as the existing `CryptoAsset` interface).",
+        "On non-2xx responses, the hook throws a descriptive error (status code + statusText) that surfaces in the existing error UI."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "operation": "modify",
+          "description": "Replace the CoinGecko fetch with a no-API-key public market-data REST API (e.g., CoinCap) and add a mapping layer that converts the provider response into the existing `CryptoAsset` interface. Ensure the request still returns the top 50 by market cap, calculates EUR prices (including EUR-denominated market cap / volume), and keeps the 5s refetch behavior. Preserve/ensure non-2xx handling throws `API request failed: <status> <statusText>` so existing error UI continues to display a descriptive message."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add a visible Dark Mode toggle that switches Tailwind class-based dark mode by toggling the `dark` class on the document root and persists the user preference across reloads with English labels.",
+      "acceptanceCriteria": [
+        "A visible theme toggle control is present in the UI (e.g., in the header).",
+        "Toggling the control switches between light and dark themes by adding/removing the `dark` class on the root element.",
+        "The chosen theme persists after page reload.",
+        "The dashboard remains readable and visually consistent in both themes using the existing CSS variables in `frontend/src/index.css`.",
+        "All user-facing toggle text is in English (e.g., \"Dark mode\", \"Light mode\")."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useTheme.ts",
+          "operation": "create",
+          "description": "Create a small theme hook that (1) reads the persisted theme preference from localStorage on startup, (2) applies/removes the `dark` class on `document.documentElement`, and (3) exposes state + a toggle action to switch between light/dark and persist the new preference."
+        },
+        {
+          "path": "frontend/src/components/ThemeToggle.tsx",
+          "operation": "create",
+          "description": "Create a user-facing theme toggle control component that uses the theme hook and shows English labels (e.g., \"Dark mode\" / \"Light mode\"). If composing any existing shadcn/ui components already in the project, verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the `ThemeToggle` into the existing header UI so the control is visible and accessible. Ensure the app wrapper continues to use token-based Tailwind classes (bg/background, text/foreground, card, muted, etc.) so the existing `frontend/src/index.css` light/dark CSS variables drive the visual theme."
+        }
+      ]
+    }
+  ]
+}

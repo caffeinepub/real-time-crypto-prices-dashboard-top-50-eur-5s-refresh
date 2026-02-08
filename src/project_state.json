@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Web app that displays real-time cryptocurrency prices: top 50 coins sorted by market cap, shown in EUR, auto-refreshing every 5 seconds.",
+  "architectural_notes": [
+    "Market data provider should not depend on CoinGecko unauthenticated endpoints; choose an API that either does not require an API key or supports configurable API keys via environment/config."
+  ],
+  "known_issues": [
+    "Deployment/build process encountered an error (deployment failed).",
+    "Frontend shows 'Failed to load market data / Failed to fetch' likely due to CoinGecko API policy change requiring an API key for requests."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-create-a-single-page-web-ui-that-displays-a-table-of-the-top-50-cryptocurrencies-ranked-by-market-capitalization-with-all-prices-shown-in-eur",
+      "title": "Create a single-page web UI that displays a table of the top 50 cryptocurrencies ranked by market capitalization, with all prices shown in EUR.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-automatic-data-refreshing-every-5-seconds-while-the-page-is-open-without-requiring-a-manual-page-reload",
+      "title": "Implement automatic data refreshing every 5 seconds while the page is open, without requiring a manual page reload.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fetch-market-data-from-a-public-cryptocurrency-market-data-rest-api-endpoint-that-can-provide-a-top-coins-by-market-cap-and-b-eur-pricing-and-map-the-api-response-into-the-ui-fields-needed-for-the-table",
+      "title": "Fetch market data from a public cryptocurrency market data REST API endpoint that can provide (a) top coins by market cap and (b) EUR pricing, and map the API response into the UI fields needed for the table.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-consistent-coherent-visual-theme-for-the-dashboard-colors-typography-spacing-and-table-styling-suitable-for-a-finance-markets-screen-and-keep-all-user-facing-ui-text-in-english",
+      "title": "Apply a consistent, coherent visual theme for the dashboard (colors, typography, spacing, and table styling) suitable for a finance/markets screen, and keep all user-facing UI text in English.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-regenerate-a-clean-working-project-from-the-injected-react-motoko-template-and-ensure-the-full-app-frontend-backend-builds-successfully-without-missing-file-errors",
+      "title": "Regenerate a clean, working project from the injected React+Motoko template and ensure the full app (frontend + backend) builds successfully without missing-file errors.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-the-underlying-cause-of-the-previous-deployment-error-by-adding-clear-developer-facing-error-surfacing-during-startup-build-e-g-failing-fast-with-actionable-messages-when-configuration-or-environment-variables-are-missing",
+      "title": "Diagnose and fix the underlying cause of the previous deployment error by adding clear, developer-facing error surfacing during startup/build (e.g., failing fast with actionable messages when configuration or environment variables are missing).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-minimal-stable-backend-canister-interface-single-motoko-actor-that-the-frontend-can-call-for-health-version-checks-so-deployment-validation-can-confirm-the-canister-is-running-even-if-external-market-data-is-temporarily-unavailable",
+      "title": "Implement a minimal, stable backend canister interface (single Motoko actor) that the frontend can call for health/version checks, so deployment validation can confirm the canister is running even if external market data is temporarily unavailable.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-coingecko-market-data-fetch-with-an-alternative-public-cryptocurrency-market-data-rest-api-that-does-not-require-an-api-key-while-keeping-the-dashboard-behavior-the-same-top-50-by-market-cap-prices-in-eur-refresh-every-5-seconds-update-the-data-mapping-layer-so-the-ui-continues-to-receive-the-existing-cryptoasset-fields-used-by-cryptodashboard-id-symbol-name-current-price-market-cap-market-cap-rank-price-change-percentage-24h-total-volume-image",
+      "title": "Replace the current CoinGecko market data fetch with an alternative public cryptocurrency market data REST API that does not require an API key, while keeping the dashboard behavior the same (top 50 by market cap, prices in EUR, refresh every 5 seconds). Update the data-mapping layer so the UI continues to receive the existing `CryptoAsset` fields used by `CryptoDashboard` (id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-user-facing-dark-mode-toggle-to-the-dashboard-ui-and-implement-theme-switching-using-tailwind-s-class-based-dark-mode-toggling-the-dark-class-on-the-document-root-persist-the-user-s-preference-across-reloads-e-g-localstorage-and-ensure-all-user-facing-labels-for-the-toggle-are-in-english",
+      "title": "Add a user-facing Dark Mode toggle to the dashboard UI and implement theme switching using Tailwind's class-based dark mode (toggling the `dark` class on the document root). Persist the user's preference across reloads (e.g., localStorage) and ensure all user-facing labels for the toggle are in English.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create a webpage showing real-time crypto prices for the top 50 coins ranked by market cap, displayed in EUR with auto-refresh every 5 seconds.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Replace CoinGecko market data API with an alternative provider (e.g., CoinRanking or CoinPaprika) that works without requiring an API key, so market data fetch succeeds.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add a user-facing Dark Mode theme toggle for the dashboard UI.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Real-time Crypto Prices Dashboard (Top 50, EUR, 5s refresh)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

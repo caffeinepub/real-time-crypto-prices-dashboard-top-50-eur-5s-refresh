@@ -1,0 +1,41 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-08T20:20:40.242Z",
+  "summary": "REQ-8 appears implemented by swapping CoinGecko market fetch to CoinCap with 50 assets, 5s refresh, EUR conversion, and preserved CryptoAsset shape with descriptive non-2xx errors. REQ-9 is mostly implemented via a persisted theme hook and a header toggle that toggles the document root `dark` class, but the toggle lacks explicit visible English text labels (only an aria-label).",
+  "missing_requirements": [
+    {
+      "id": "REQ-9",
+      "requirement": "Ensure all user-facing labels for the dark mode toggle are in English (e.g., \"Dark mode\", \"Light mode\").",
+      "reason": "The toggle control is icon-only and does not render visible English text such as \"Dark mode\"/\"Light mode\"; it only provides an `aria-label`.",
+      "evidence": [
+        "frontend/src/components/ThemeToggle.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Added new footer content/branding link and decorative heart emoji.",
+      "reason": "Not requested by REQ-8/REQ-9; introduces additional user-facing UI content unrelated to API swap or dark mode toggle.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "description": "Added backend health status console logging and warning side-effects in App component.",
+      "reason": "Not requested by REQ-8/REQ-9; unrelated behavioral change (extra logging/effects).",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/ThemeToggle.tsx",
+    "frontend/src/features/crypto/useCryptoMarketData.ts",
+    "frontend/src/hooks/useTheme.ts",
+    "project_state.json"
+  ]
+}

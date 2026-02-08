@@ -1,0 +1,20 @@
+{
+  "backend/main.mo": "Defines a simple backend actor exposing healthCheck and version query functions.",
+  "feature_evidence.json": "Feature evidence report listing implemented features, affected files, components, and test IDs.",
+  "frontend-file-summaries.txt": "Contains prewritten summaries for various frontend source files used in build planning.",
+  "frontend/index.css": "Tailwind base setup with custom CSS variables for light and dark themes using OKLCH colors.",
+  "frontend/index.html": "Basic HTML entry point that mounts the React app and loads main.tsx.",
+  "frontend/src/App.tsx": "Root component rendering header, theme toggle, crypto dashboard, and backend health logging.",
+  "frontend/src/components/ThemeToggle.tsx": "Button component that switches between light and dark mode using the useTheme hook.",
+  "frontend/src/features/crypto/CryptoDashboard.tsx": "Displays crypto market data in a table with loading, error handling, and 5-second refresh indicators.",
+  "frontend/src/features/crypto/types.ts": "Type definitions for CryptoAsset and API response structures.",
+  "frontend/src/features/crypto/useCryptoMarketData.ts": "React Query hook fetching top 50 assets from CoinCap, converting values to EUR, and mapping to CryptoAsset.",
+  "frontend/src/hooks/useActor.ts": "Creates and manages a backend actor tied to user identity, invalidating dependent queries when updated.",
+  "frontend/src/hooks/useInternetIdentity.ts": "Provides authentication context using Internet Identity, handling login, identity persistence, and state management.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for backend health and version calls using the actor instance.",
+  "frontend/src/hooks/useTheme.ts": "React hook managing light/dark theme, syncing it to localStorage and toggling a root CSS class.",
+  "frontend/src/index.css": "Tailwind base styling plus OKLCH CSS variables defining light and dark theme color tokens.",
+  "frontend/src/main.tsx": "Entry point creating the React root, initializing React Query, and rendering App within providers.",
+  "frontend/tailwind.config.js": "Tailwind configuration extending theme colors from CSS variables and enabling plugins and dark mode.",
+  "project_state.json": "Metadata describing the project state, features, issues, and architectural notes for the crypto tracker app."
+}
