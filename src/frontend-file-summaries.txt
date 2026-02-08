@@ -2,11 +2,12 @@
   "frontend/src/config.ts": "Configuration loader that validates required environment variables at startup and creates backend actor instances with proper error handling.",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for backend health check and version queries with proper error handling and caching strategies.",
   "frontend/src/features/crypto/types.ts": "TypeScript interfaces defining the structure of cryptocurrency market data from the CoinGecko API.",
-  "frontend/src/features/crypto/useCryptoMarketData.ts": "React Query hook that fetches top 50 cryptocurrencies from CoinCap API (no API key required) with EUR conversion, 5-second auto-refresh, and maps the response to the existing CryptoAsset interface.",
-  "frontend/src/features/crypto/CryptoDashboard.tsx": "Main dashboard component displaying cryptocurrency market data in a responsive table with loading states, error handling, and real-time price updates.",
+  "frontend/src/features/crypto/useCryptoMarketData.ts": "React Query hook that fetches top 50 cryptocurrencies from CoinPaprika API with EUR pricing, 5-second auto-refresh, API key validation, and maps responses to the CryptoAsset interface with safe image URL fallbacks.",
+  "frontend/src/features/crypto/CryptoDashboard.tsx": "Main dashboard component displaying cryptocurrency market data in a responsive table with loading states, error handling, real-time price updates, and robust image error handling that falls back to placeholder when logos fail to load.",
   "frontend/src/App.tsx": "Root application component that renders the crypto dashboard with header (including theme toggle), footer, and backend health check integration.",
   "frontend/src/index.css": "Global styles with OKLCH color system featuring a purple-accent theme for both light and dark modes.",
   "frontend/tailwind.config.js": "Tailwind configuration with custom color tokens, Inter and JetBrains Mono fonts, and extended design system.",
   "frontend/src/hooks/useTheme.ts": "Custom React hook that manages theme state (light/dark), persists user preference to localStorage, and toggles the 'dark' class on the document root element.",
-  "frontend/src/components/ThemeToggle.tsx": "Theme toggle button component that displays a sun/moon icon and switches between light and dark modes using the useTheme hook."
+  "frontend/src/components/ThemeToggle.tsx": "Theme toggle button component that displays a sun/moon icon and switches between light and dark modes using the useTheme hook.",
+  "frontend/.env.example": "Example environment configuration file documenting the required CoinPaprika API key variable with instructions for obtaining the key."
 }

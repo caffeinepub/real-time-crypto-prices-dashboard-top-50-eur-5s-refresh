@@ -1,41 +1,46 @@
 import { useQuery } from '@tanstack/react-query';
 import type { CryptoAsset } from './types';
 
-const COINCAP_API = 'https://api.coincap.io/v2';
+const COINPAPRIKA_API = 'https://api.coinpaprika.com/v1';
+const API_KEY = import.meta.env.VITE_COINPAPRIKA_API_KEY;
 
-interface CoinCapAsset {
+interface CoinPaprikaQuote {
+    price: number;
+    volume_24h: number;
+    market_cap: number;
+    percent_change_24h: number;
+}
+
+interface CoinPaprikaTicker {
     id: string;
-    rank: string;
-    symbol: string;
     name: string;
-    priceUsd: string;
-    marketCapUsd: string;
-    volumeUsd24Hr: string;
-    changePercent24Hr: string;
+    symbol: string;
+    rank: number;
+    quotes: {
+        EUR: CoinPaprikaQuote;
+    };
 }
 
-interface CoinCapResponse {
-    data: CoinCapAsset[];
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"%3E%3Ccircle cx="16" cy="16" r="16" fill="%23e5e7eb"/%3E%3Ctext x="16" y="20" font-family="Arial" font-size="14" fill="%239ca3af" text-anchor="middle"%3E%3F%3C/text%3E%3C/svg%3E';
+
+function getCoinPaprikaImageUrl(coinId: string): string {
+    // CoinPaprika provides coin images at this URL pattern
+    return `https://static.coinpaprika.com/coin/${coinId}/logo.png`;
 }
 
-// EUR/USD exchange rate (approximate, could be fetched from another API if needed)
-const USD_TO_EUR = 0.92;
-
-function mapCoinCapToCryptoAsset(asset: CoinCapAsset): CryptoAsset {
-    const priceUsd = parseFloat(asset.priceUsd);
-    const marketCapUsd = parseFloat(asset.marketCapUsd);
-    const volumeUsd = parseFloat(asset.volumeUsd24Hr);
+function mapCoinPaprikaToCryptoAsset(ticker: CoinPaprikaTicker): CryptoAsset {
+    const eurQuote = ticker.quotes.EUR;
     
     return {
-        id: asset.id,
-        symbol: asset.symbol.toLowerCase(),
-        name: asset.name,
-        current_price: priceUsd * USD_TO_EUR,
-        market_cap: marketCapUsd * USD_TO_EUR,
-        market_cap_rank: parseInt(asset.rank),
-        price_change_percentage_24h: parseFloat(asset.changePercent24Hr),
-        total_volume: volumeUsd * USD_TO_EUR,
-        image: `https://assets.coincap.io/assets/icons/${asset.symbol.toLowerCase()}@2x.png`
+        id: ticker.id,
+        symbol: ticker.symbol.toLowerCase(),
+        name: ticker.name,
+        current_price: eurQuote.price,
+        market_cap: eurQuote.market_cap,
+        market_cap_rank: ticker.rank,
+        price_change_percentage_24h: eurQuote.percent_change_24h,
+        total_volume: eurQuote.volume_24h,
+        image: getCoinPaprikaImageUrl(ticker.id)
     };
 }
 
@@ -43,22 +48,44 @@ export function useCryptoMarketData() {
     return useQuery<CryptoAsset[], Error>({
         queryKey: ['crypto-market-data'],
         queryFn: async () => {
+            // Validate API key at runtime
+            if (!API_KEY || API_KEY.trim() === '') {
+                throw new Error(
+                    'CoinPaprika API key is required. Please set VITE_COINPAPRIKA_API_KEY in your .env file. ' +
+                    'Get your API key at https://coinpaprika.com/api'
+                );
+            }
+
             try {
+                const headers: HeadersInit = {
+                    'Authorization': `${API_KEY}`
+                };
+
                 const response = await fetch(
-                    `${COINCAP_API}/assets?limit=50`
+                    `${COINPAPRIKA_API}/tickers?quotes=EUR`,
+                    { headers }
                 );
 
                 if (!response.ok) {
-                    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                    if (response.status === 401) {
+                        throw new Error('Invalid CoinPaprika API key. Please check your VITE_COINPAPRIKA_API_KEY.');
+                    }
+                    throw new Error(`CoinPaprika API request failed: ${response.status} ${response.statusText}`);
                 }
 
-                const result: CoinCapResponse = await response.json();
+                const tickers: CoinPaprikaTicker[] = await response.json();
                 
-                console.log('Crypto market data fetched successfully:', result.data.length, 'assets');
+                // Filter and sort by rank, take top 50
+                const top50 = tickers
+                    .filter(ticker => ticker.rank > 0 && ticker.quotes?.EUR)
+                    .sort((a, b) => a.rank - b.rank)
+                    .slice(0, 50);
                 
-                return result.data.map(mapCoinCapToCryptoAsset);
+                console.log('CoinPaprika market data fetched successfully:', top50.length, 'assets');
+                
+                return top50.map(mapCoinPaprikaToCryptoAsset);
             } catch (error) {
-                console.error('Failed to fetch crypto market data:', error);
+                console.error('Failed to fetch crypto market data from CoinPaprika:', error);
                 throw error;
             }
         },

@@ -5,9 +5,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useState } from 'react';
+
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"%3E%3Ccircle cx="16" cy="16" r="16" fill="%23e5e7eb"/%3E%3Ctext x="16" y="20" font-family="Arial" font-size="14" fill="%239ca3af" text-anchor="middle"%3E%3F%3C/text%3E%3C/svg%3E';
 
 export function CryptoDashboard() {
     const { data: cryptoData, isLoading, isError, error } = useCryptoMarketData();
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+
+    const handleImageError = (assetId: string) => {
+        setImageErrors(prev => new Set(prev).add(assetId));
+    };
 
     if (isError) {
         return (
@@ -71,9 +79,10 @@ export function CryptoDashboard() {
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
                                                     <img 
-                                                        src={asset.image} 
+                                                        src={imageErrors.has(asset.id) ? PLACEHOLDER_IMAGE : asset.image}
                                                         alt={asset.name}
                                                         className="h-8 w-8 rounded-full"
+                                                        onError={() => handleImageError(asset.id)}
                                                     />
                                                     <div>
                                                         <div className="font-semibold">{asset.name}</div>

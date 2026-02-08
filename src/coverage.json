@@ -1,18 +1,18 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T20:20:40.245Z",
+  "generatedAt": "2026-02-08T20:29:39.564Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-8",
-        "summary": "Replace the current CoinGecko market data fetch with an alternative public cryptocurrency market data REST API that does not require an API key, while keeping the dashboard behavior the same (top 50 by market cap, prices in EUR, refresh every 5 seconds). Update the data-mapping layer so the UI continues to receive the existing `CryptoAsset` fields used by `CryptoDashboard` (id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image).",
+        "id": "REQ-10",
+        "summary": "Replace the current CoinCap-based market data fetch in `frontend/src/features/crypto/useCryptoMarketData.ts` with CoinPaprika as the data provider, while keeping the existing dashboard behavior unchanged (top 50 by market cap rank, prices shown in EUR, auto-refresh every 5 seconds) and continuing to return the existing `CryptoAsset` shape consumed by `CryptoDashboard`.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/features/crypto/useCryptoMarketData.ts"
@@ -22,32 +22,41 @@
         ]
       },
       {
-        "id": "REQ-9",
-        "summary": "Add a user-facing Dark Mode toggle to the dashboard UI and implement theme switching using Tailwind's class-based dark mode (toggling the `dark` class on the document root). Persist the user's preference across reloads (e.g., localStorage) and ensure all user-facing labels for the toggle are in English.",
+        "id": "REQ-11",
+        "summary": "Add configurable CoinPaprika API key support for the frontend market data request(s), and fail fast with a clear, developer-facing error message when the API key is missing or empty (do not silently fall back to another provider).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useTheme.ts",
-          "frontend/src/components/ThemeToggle.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "frontend/.env.example"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useTheme.ts",
-          "frontend/src/components/ThemeToggle.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "frontend/.env.example"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Update the CoinPaprika-to-`CryptoAsset` mapping to ensure robust behavior when optional fields are missing (e.g., missing logo/image): provide a safe fallback image URL or a deterministic placeholder so the table does not break layout or crash on missing images.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "frontend/src/features/crypto/CryptoDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "frontend/src/features/crypto/CryptoDashboard.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/ThemeToggle.tsx",
+    "frontend/.env.example",
+    "frontend/src/features/crypto/CryptoDashboard.tsx",
     "frontend/src/features/crypto/useCryptoMarketData.ts",
-    "frontend/src/hooks/useTheme.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

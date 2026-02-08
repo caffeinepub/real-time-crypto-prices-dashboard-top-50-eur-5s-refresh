@@ -1,59 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Replace CoinGecko API provider and add Dark Mode toggle",
+  "title": "Switch crypto market data provider to CoinPaprika (with API key support)",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-8",
-      "text": "Replace the current CoinGecko market data fetch with an alternative public cryptocurrency market data REST API that does not require an API key, while keeping the dashboard behavior the same (top 50 by market cap, prices in EUR, refresh every 5 seconds). Update the data-mapping layer so the UI continues to receive the existing `CryptoAsset` fields used by `CryptoDashboard` (id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image).",
+      "id": "REQ-10",
+      "text": "Replace the current CoinCap-based market data fetch in `frontend/src/features/crypto/useCryptoMarketData.ts` with CoinPaprika as the data provider, while keeping the existing dashboard behavior unchanged (top 50 by market cap rank, prices shown in EUR, auto-refresh every 5 seconds) and continuing to return the existing `CryptoAsset` shape consumed by `CryptoDashboard`.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-5"
+          "msg-user"
         ],
         "quotes": [
-          "Jah, vaheta API välja ja lisa lehele \"dark mode\""
+          "Kasuta CoinPaprika"
         ]
       },
       "acceptanceCriteria": [
-        "The app no longer calls the CoinGecko endpoint `https://api.coingecko.com/api/v3/coins/markets`.",
-        "Market data loads successfully without requiring any API key configuration.",
-        "The table still displays 50 assets ranked by market cap, with prices shown in EUR, and continues auto-refreshing every 5 seconds.",
-        "`CryptoDashboard` renders without code changes needed for renamed/missing fields (i.e., the hook returns data shaped as the existing `CryptoAsset` interface).",
-        "On non-2xx responses, the hook throws a descriptive error (status code + statusText) that surfaces in the existing error UI."
+        "The dashboard continues to render a table of 50 assets sorted by market cap rank (#1–#50).",
+        "All displayed monetary values remain in EUR.",
+        "React Query continues to refetch market data every 5 seconds while the page is open.",
+        "`useCryptoMarketData()` still returns an array of `CryptoAsset` objects with fields: id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image."
       ]
     },
     {
-      "id": "REQ-9",
-      "text": "Add a user-facing Dark Mode toggle to the dashboard UI and implement theme switching using Tailwind's class-based dark mode (toggling the `dark` class on the document root). Persist the user's preference across reloads (e.g., localStorage) and ensure all user-facing labels for the toggle are in English.",
+      "id": "REQ-11",
+      "text": "Add configurable CoinPaprika API key support for the frontend market data request(s), and fail fast with a clear, developer-facing error message when the API key is missing or empty (do not silently fall back to another provider).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-5"
+          "msg-user"
         ],
         "quotes": [
-          "Jah, vaheta API välja ja lisa lehele \"dark mode\""
+          "Kasuta CoinPaprika"
         ]
       },
       "acceptanceCriteria": [
-        "A visible theme toggle control is present in the UI (e.g., in the header).",
-        "Toggling the control switches between light and dark themes by adding/removing the `dark` class on the root element.",
-        "The chosen theme persists after page reload.",
-        "The dashboard remains readable and visually consistent in both themes using the existing CSS variables in `frontend/src/index.css`.",
-        "All user-facing toggle text is in English (e.g., \"Dark mode\", \"Light mode\")."
+        "When the API key is missing/empty at runtime, the app surfaces an explicit error that indicates an API key is required for CoinPaprika (no generic \"Failed to fetch\" only).",
+        "When a valid API key is provided, the browser request succeeds without CORS errors and the table populates with live data.",
+        "No user-facing UI copy is added in any language other than English."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Update the CoinPaprika-to-`CryptoAsset` mapping to ensure robust behavior when optional fields are missing (e.g., missing logo/image): provide a safe fallback image URL or a deterministic placeholder so the table does not break layout or crash on missing images.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user"
+        ],
+        "quotes": [
+          "Kasuta CoinPaprika"
+        ]
+      },
+      "acceptanceCriteria": [
+        "If an asset image URL is missing or fails to load, the UI still renders rows without throwing errors.",
+        "All rows in the table remain visually aligned even when some assets have no provider logo available."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/components/ui` (compose existing shadcn components instead).",
-    "Do not edit immutable frontend paths: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, and `frontend/src/components/ui`.",
-    "Keep the backend as a single Motoko actor in `backend/main.mo`; no backend changes are required for the API swap or theme toggle."
+    "Do not modify files under `frontend/src/components/ui` (compose existing UI components instead).",
+    "Do not modify files listed in SYSTEM_CONTEXT `frontend.immutablePaths`.",
+    "Backend remains a single Motoko actor; no additional backend services."
   ],
   "nonGoals": [
-    "Adding price charts/sparklines.",
-    "Adding third-party authentication providers beyond Internet Identity.",
-    "Implementing real-time features via WebSockets or push notifications.",
-    "Introducing a new backend data cache or external database."
+    "Adding new dashboard features beyond switching the market data provider and required configuration/error handling.",
+    "Changing refresh cadence, currency display (EUR), or the table columns/layout beyond what is required to keep the app working with CoinPaprika."
   ],
   "imageRequirements": {
     "required": [],

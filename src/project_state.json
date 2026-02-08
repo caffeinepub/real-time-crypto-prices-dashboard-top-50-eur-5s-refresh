@@ -1,13 +1,16 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "Web app that displays real-time cryptocurrency prices: top 50 coins sorted by market cap, shown in EUR, auto-refreshing every 5 seconds.",
   "architectural_notes": [
-    "Market data provider should not depend on CoinGecko unauthenticated endpoints; choose an API that either does not require an API key or supports configurable API keys via environment/config."
+    "Market data provider should not depend on CoinGecko unauthenticated endpoints; choose an API that either does not require an API key or supports configurable API keys via environment/config.",
+    "Decision: switch market data provider to CoinPaprika (CORS-supported) even though it requires an API key; API key must be configurable via environment/config and not hardcoded in the frontend."
   ],
   "known_issues": [
     "Deployment/build process encountered an error (deployment failed).",
-    "Frontend shows 'Failed to load market data / Failed to fetch' likely due to CoinGecko API policy change requiring an API key for requests."
+    "Frontend shows 'Failed to load market data / Failed to fetch' likely due to CoinGecko API policy change requiring an API key for requests.",
+    "Prior attempted alternative provider (e.g., CoinRanking) may fail in-browser due to missing CORS support, causing 'Failed to fetch'.",
+    "CoinPaprika integration requires an API key; missing/incorrect configuration will keep market data failing."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -80,6 +83,30 @@
       "title": "Add a user-facing Dark Mode toggle to the dashboard UI and implement theme switching using Tailwind's class-based dark mode (toggling the `dark` class on the document root). Persist the user's preference across reloads (e.g., localStorage) and ensure all user-facing labels for the toggle are in English.",
       "reqIds": [
         "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-coincap-based-market-data-fetch-in-frontend-src-features-crypto-usecryptomarketdata-ts-with-coinpaprika-as-the-data-provider-while-keeping-the-existing-dashboard-behavior-unchanged-top-50-by-market-cap-rank-prices-shown-in-eur-auto-refresh-every-5-seconds-and-continuing-to-return-the-existing-cryptoasset-shape-consumed-by-cryptodashboard",
+      "title": "Replace the current CoinCap-based market data fetch in `frontend/src/features/crypto/useCryptoMarketData.ts` with CoinPaprika as the data provider, while keeping the existing dashboard behavior unchanged (top 50 by market cap rank, prices shown in EUR, auto-refresh every 5 seconds) and continuing to return the existing `CryptoAsset` shape consumed by `CryptoDashboard`.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-configurable-coinpaprika-api-key-support-for-the-frontend-market-data-request-s-and-fail-fast-with-a-clear-developer-facing-error-message-when-the-api-key-is-missing-or-empty-do-not-silently-fall-back-to-another-provider",
+      "title": "Add configurable CoinPaprika API key support for the frontend market data request(s), and fail fast with a clear, developer-facing error message when the API key is missing or empty (do not silently fall back to another provider).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-coinpaprika-to-cryptoasset-mapping-to-ensure-robust-behavior-when-optional-fields-are-missing-e-g-missing-logo-image-provide-a-safe-fallback-image-url-or-a-deterministic-placeholder-so-the-table-does-not-break-layout-or-crash-on-missing-images",
+      "title": "Update the CoinPaprika-to-`CryptoAsset` mapping to ensure robust behavior when optional fields are missing (e.g., missing logo/image): provide a safe fallback image URL or a deterministic placeholder so the table does not break layout or crash on missing images.",
+      "reqIds": [
+        "REQ-12"
       ],
       "version": 1
     }
