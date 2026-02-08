@@ -2,46 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-change-the-default-crypto-market-data-auto-refresh-interval-from-5-seconds-to-5-minutes-300000ms-when-vite-crypto-refresh-interval-ms-is-unset-or-empty",
-      "featureTitle": "Change the default crypto market data auto-refresh interval from 5 seconds to 5 minutes (300000ms) when `VITE_CRYPTO_REFRESH_INTERVAL_MS` is unset or empty.",
-      "files": [
-        "frontend/src/features/crypto/cryptoRefreshInterval.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-20"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-user-facing-refresh-interval-control-to-the-crypto-dashboard-ui-that-lets-the-user-pick-one-of-these-presets-1m-5m-15m-30m",
-      "featureTitle": "Add a user-facing refresh interval control to the crypto dashboard UI that lets the user pick one of these presets: 1m, 5m, 15m, 30m.",
-      "files": [
-        "frontend/src/features/crypto/CryptoDashboard.tsx",
-        "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
-        "frontend/src/features/crypto/useCryptoMarketData.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-21"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-dashboard-subtitle-refresh-interval-text-reflects-the-effective-refresh-interval-after-the-user-selects-a-preset-not-just-the-environment-configured-value",
-      "featureTitle": "Ensure the dashboard subtitle refresh-interval text reflects the effective refresh interval after the user selects a preset (not just the environment-configured value).",
+      "featureId": "feature-add-a-tabbed-view-to-the-crypto-dashboard-so-users-can-switch-between-1-the-existing-full-market-table-view-and-2-a-new-prices-view-that-displays-only-cryptocurrency-prices",
+      "featureTitle": "Add a tabbed view to the crypto dashboard so users can switch between (1) the existing full market table view and (2) a new \"Prices\" view that displays only cryptocurrency prices.",
       "files": [
         "frontend/src/features/crypto/CryptoDashboard.tsx"
       ],
@@ -53,15 +15,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-24"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-frontend-env-example-documentation-so-the-documented-default-refresh-interval-matches-the-new-5-minute-default-and-include-an-example-for-setting-5-minutes-explicitly",
-      "featureTitle": "Update `frontend/.env.example` documentation so the documented default refresh interval matches the new 5-minute default, and include an example for setting 5 minutes explicitly.",
+      "featureId": "feature-implement-the-new-prices-tab-content-to-show-a-compact-list-that-displays-for-each-of-the-top-50-assets-rank-coin-icon-name-symbol-and-current-price-in-eur-and-does-not-show-24h-change-market-cap-or-volume",
+      "featureTitle": "Implement the new \"Prices\" tab content to show a compact list that displays, for each of the top 50 assets: rank, coin icon, name, symbol, and current price in EUR, and does not show 24h change, market cap, or volume.",
       "files": [
-        "frontend/.env.example"
+        "frontend/src/features/crypto/CryptoDashboard.tsx",
+        "frontend/src/features/crypto/CryptoPricesList.tsx",
+        "frontend/src/features/crypto/formatters.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -71,7 +35,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-23"
+        "REQ-25"
       ],
       "confidence": "high"
     }

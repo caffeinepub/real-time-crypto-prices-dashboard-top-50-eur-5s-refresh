@@ -1,76 +1,55 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Crypto dashboard refresh interval: 5-minute default + preset selector",
+  "title": "Add tabbed Overview/Prices views to the crypto dashboard",
   "requirements": [
     {
-      "id": "REQ-20",
-      "summary": "Update env-derived crypto auto-refresh interval default to 5 minutes when unset/empty while preserving existing invalid-value errors.",
+      "id": "REQ-24",
+      "summary": "Add a tabbed control to the crypto dashboard to switch between the existing market overview table and a new Prices-only view while reusing the existing market data query and preserving refresh selector/spinner behavior.",
       "acceptanceCriteria": [
-        "If `VITE_CRYPTO_REFRESH_INTERVAL_MS` is not set (or is an empty string), the app uses a 300000ms refresh interval.",
-        "Existing validation behavior remains: if `VITE_CRYPTO_REFRESH_INTERVAL_MS` is set but invalid (non-numeric, non-integer, or < 1000), the app throws a clear developer-facing error."
+        "The dashboard UI includes a clear tab control with two tabs labeled in English (e.g., \"Overview\" and \"Prices\").",
+        "Switching tabs does not trigger a separate network request; both tabs reuse the existing `useCryptoMarketData` query result.",
+        "The refresh interval selector and the loading spinner remain available and behave the same regardless of which tab is selected.",
+        "The existing table view is preserved and remains the default selected tab on page load (unless otherwise specified in code)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/crypto/cryptoRefreshInterval.ts",
+          "path": "frontend/src/features/crypto/CryptoDashboard.tsx",
           "operation": "modify",
-          "description": "Change DEFAULT_REFRESH_INTERVAL_MS from 5000 to 300000 (5 minutes) for the unset/empty env-var case, keeping the existing numeric/integer/minimum validation and developer-facing error messages intact."
-        }
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "summary": "Add a preset refresh interval selector (1m/5m/15m/30m) to the crypto dashboard that updates React Query refetch behavior immediately and accessibly.",
-      "acceptanceCriteria": [
-        "A control (button or button group) is visible on the dashboard with the preset options labeled in English exactly: \"1m\", \"5m\", \"15m\", \"30m\".",
-        "Selecting a preset immediately changes the React Query refetch interval used by `useCryptoMarketData` without requiring a page reload.",
-        "The selected preset is visually indicated (e.g., active/selected styling) and is keyboard accessible."
-      ],
-      "file_operations": [
+          "description": "Introduce local UI state for the active tab (defaulting to the existing table/\"Overview\" view), render a composed tab control (do not modify anything under frontend/src/components/ui), and ensure `useCryptoMarketData` is called once with its results passed to the active tab content so switching tabs does not refetch."
+        },
         {
-          "path": "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
+          "path": "frontend/src/features/crypto/DashboardTabs.tsx",
           "operation": "create",
-          "description": "Create a dashboard-scoped refresh-interval selector component that renders preset options labeled exactly \"1m\", \"5m\", \"15m\", \"30m\" and exposes a controlled value/onChange API. Implement keyboard-accessible selection (e.g., radiogroup semantics with focus/active styling) using Tailwind classes (do not edit immutable `frontend/src/components/ui/*`)."
-        },
-        {
-          "path": "frontend/src/features/crypto/useCryptoMarketData.ts",
-          "operation": "modify",
-          "description": "Update `useCryptoMarketData` to accept an optional override refresh interval (ms). When provided, use it for React Query `refetchInterval`/`staleTime` so changes take effect immediately on re-render; otherwise fall back to the env/default-derived interval via `getEffectiveRefreshInterval()`."
-        },
-        {
-          "path": "frontend/src/features/crypto/CryptoDashboard.tsx",
-          "operation": "modify",
-          "description": "Wire the new selector into the dashboard header area: hold selected preset interval in React state, pass it into `useCryptoMarketData(selectedIntervalMs)`, and visually indicate the active preset. Ensure all user-facing labels remain English and match the required preset text exactly."
+          "description": "Create a lightweight, dashboard-local tab control component (e.g., built by composing existing Button/Card primitives) that provides two English-labeled tabs (\"Overview\" and \"Prices\") and exposes controlled selection; do not add or modify files under frontend/src/components/ui."
         }
       ]
     },
     {
-      "id": "REQ-22",
-      "summary": "Make the dashboard subtitle reflect the effective refresh interval (preset override when selected, otherwise env/default).",
+      "id": "REQ-25",
+      "summary": "Implement the new Prices tab content as a compact list of the top 50 assets showing rank, icon (with existing placeholder-on-error behavior), name, symbol, and formatted EUR price only, sharing loading/error behavior with the dashboard.",
       "acceptanceCriteria": [
-        "After selecting a preset, the subtitle displays the new interval in seconds (e.g., 60s, 300s, 900s, 1800s) and matches the actual refetch behavior.",
-        "When no preset has been selected, the subtitle reflects the env/default-derived interval."
+        "The \"Prices\" tab shows a vertical list (or similarly compact layout) of the same top 50 assets currently used by the dashboard.",
+        "Each list row includes: market cap rank, coin image (with the existing placeholder behavior when image fails), asset name, symbol, and the formatted EUR price.",
+        "No columns/fields for 24h change, market cap, or volume are shown in the \"Prices\" view.",
+        "All user-facing labels/text added for this feature are in English.",
+        "The \"Failed to load market data\" error state remains correct and is shown consistently for both tabs."
       ],
       "file_operations": [
+        {
+          "path": "frontend/src/features/crypto/CryptoPricesList.tsx",
+          "operation": "create",
+          "description": "Create the Prices tab content component that renders a compact vertical list for up to 50 assets (rank, icon with placeholder fallback on image error, name, symbol, EUR price formatting consistent with the dashboard), and supports a loading skeleton state consistent with existing dashboard patterns."
+        },
+        {
+          "path": "frontend/src/features/crypto/formatters.ts",
+          "operation": "create",
+          "description": "Add shared formatting helpers (e.g., EUR price formatting rules matching the existing dashboard) to keep Overview and Prices views consistent without duplicating logic."
+        },
         {
           "path": "frontend/src/features/crypto/CryptoDashboard.tsx",
           "operation": "modify",
-          "description": "Change subtitle interval computation to derive from the effective interval used by the query: use the selected preset (if any) converted to seconds for display; otherwise use `getEffectiveRefreshIntervalSeconds()`. Ensure the displayed seconds match the refetch interval passed to `useCryptoMarketData`."
-        }
-      ]
-    },
-    {
-      "id": "REQ-23",
-      "summary": "Update `.env.example` to document the new 5-minute default and provide an explicit 5-minute example value.",
-      "acceptanceCriteria": [
-        "`frontend/.env.example` states the default as 300000 (5 minutes) instead of 5000 (5 seconds).",
-        "`frontend/.env.example` includes an example line for `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000`."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/.env.example",
-          "operation": "modify",
-          "description": "Update refresh interval documentation: set documented default to 300000 (5 minutes) and add an explicit example line `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000` (keep all text in English)."
+          "description": "Wire the new Prices view into the tabbed dashboard by rendering CryptoPricesList when the Prices tab is selected; ensure the existing destructive error state remains a single shared guard for both tabs and keep the refresh interval selector and loading spinner in the header unchanged."
         }
       ]
     }

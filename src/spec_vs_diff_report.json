@@ -1,18 +1,32 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T21:04:20.186Z",
-  "summary": "All four requested frontend requirements appear implemented: default refresh interval now falls back to 300000ms with validation preserved, a preset interval selector (1m/5m/15m/30m) is added and wired to React Query refetchInterval without reload, the subtitle reflects the effective interval after selection, and .env.example documentation is updated accordingly.",
+  "generatedAt": "2026-02-08T21:24:29.074Z",
+  "summary": "Implemented a tabbed dashboard UI with \"Overview\" and \"Prices\" tabs, and added a new compact Prices list view showing rank, icon (with fallback), name, symbol, and EUR price. Existing refresh interval selector, loading spinner, and error handling remain in the dashboard wrapper.",
   "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.86,
+  "hallucinated_features": [
+    {
+      "description": "Added shared formatting utilities for market cap and volume (in addition to EUR price) which are not required for the new Prices-only tab feature.",
+      "reason": "BuildRequest only requires a Prices tab view and EUR price formatting for that view; market cap/volume formatters are extra beyond the stated requirements.",
+      "evidence": [
+        "frontend/src/features/crypto/formatters.ts",
+        "frontend/src/features/crypto/CryptoDashboard.tsx"
+      ]
+    },
+    {
+      "description": "Added a \"No data available\" empty-state message for the Prices list.",
+      "reason": "The BuildRequest did not ask for a new empty-state UI; only specified consistent error handling for failed loads.",
+      "evidence": [
+        "frontend/src/features/crypto/CryptoPricesList.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/.env.example",
     "frontend/src/features/crypto/CryptoDashboard.tsx",
-    "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
-    "frontend/src/features/crypto/cryptoRefreshInterval.ts",
-    "frontend/src/features/crypto/useCryptoMarketData.ts",
+    "frontend/src/features/crypto/CryptoPricesList.tsx",
+    "frontend/src/features/crypto/formatters.ts",
     "project_state.json"
   ]
 }

@@ -3,7 +3,7 @@
   "frontend/src/hooks/useQueries.ts": "React Query hooks for backend health check and version queries with proper error handling and caching strategies.",
   "frontend/src/features/crypto/types.ts": "TypeScript interfaces defining the structure of cryptocurrency market data from the CoinGecko API.",
   "frontend/src/features/crypto/useCryptoMarketData.ts": "React Query hook that fetches top 50 cryptocurrencies from CoinGecko's free public API with EUR pricing, accepting an optional override refresh interval parameter that takes precedence over the env/default-derived interval.",
-  "frontend/src/features/crypto/CryptoDashboard.tsx": "Main dashboard component displaying cryptocurrency market data in a responsive table with loading states, error handling, real-time price updates, image error handling with placeholder fallback, and a refresh interval selector that updates the query behavior immediately with dynamic subtitle showing the effective interval.",
+  "frontend/src/features/crypto/CryptoDashboard.tsx": "Main dashboard component with tabbed interface (Overview/Prices) displaying cryptocurrency market data, reusing a single query for both tabs, with refresh interval selector, loading spinner, and error handling preserved.",
   "frontend/src/App.tsx": "Root application component that renders the crypto dashboard with header (including theme toggle), footer, and backend health check integration.",
   "frontend/src/index.css": "Global styles with OKLCH color system featuring a purple-accent theme for both light and dark modes.",
   "frontend/tailwind.config.js": "Tailwind configuration with custom color tokens, Inter and JetBrains Mono fonts, and extended design system.",
@@ -11,5 +11,7 @@
   "frontend/src/components/ThemeToggle.tsx": "Theme toggle button component that displays a sun/moon icon and switches between light and dark modes using the useTheme hook.",
   "frontend/.env.example": "Example environment configuration file documenting the VITE_CRYPTO_REFRESH_INTERVAL_MS variable with comment explaining its purpose, 300000ms (5 minute) default value, minimum value, and example usage.",
   "frontend/src/features/crypto/cryptoRefreshInterval.ts": "Configuration helper that reads and validates VITE_CRYPTO_REFRESH_INTERVAL_MS environment variable, providing a 300000ms (5 minute) default and throwing clear errors for invalid values, with helpers for both milliseconds and seconds display.",
-  "frontend/src/features/crypto/RefreshIntervalSelector.tsx": "Keyboard-accessible refresh interval selector component that renders preset options (1m, 5m, 15m, 30m) as a button group with active state styling and exposes a controlled value/onChange API."
+  "frontend/src/features/crypto/RefreshIntervalSelector.tsx": "Keyboard-accessible refresh interval selector component that renders preset options (1m, 5m, 15m, 30m) as a button group with active state styling and exposes a controlled value/onChange API.",
+  "frontend/src/features/crypto/formatters.ts": "Shared formatting utility functions for EUR prices, market cap, and volume to ensure consistent display across Overview and Prices views.",
+  "frontend/src/features/crypto/CryptoPricesList.tsx": "Compact vertical list component for the Prices tab showing rank, icon with placeholder fallback, name, symbol, and formatted EUR price for up to 50 crypto assets with loading skeleton states."
 }

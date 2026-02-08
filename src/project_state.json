@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
+  "projectStateVersion": 17,
   "summary": "Web app that displays real-time cryptocurrency prices: top 50 coins sorted by market cap, shown in EUR, auto-refreshing every 5 seconds.",
   "architectural_notes": [
     "Market data provider should not depend on CoinGecko unauthenticated endpoints; choose an API that either does not require an API key or supports configurable API keys via environment/config.",
@@ -199,6 +199,22 @@
         "REQ-23"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-tabbed-view-to-the-crypto-dashboard-so-users-can-switch-between-1-the-existing-full-market-table-view-and-2-a-new-prices-view-that-displays-only-cryptocurrency-prices",
+      "title": "Add a tabbed view to the crypto dashboard so users can switch between (1) the existing full market table view and (2) a new \"Prices\" view that displays only cryptocurrency prices.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-new-prices-tab-content-to-show-a-compact-list-that-displays-for-each-of-the-top-50-assets-rank-coin-icon-name-symbol-and-current-price-in-eur-and-does-not-show-24h-change-market-cap-or-volume",
+      "title": "Implement the new \"Prices\" tab content to show a compact list that displays, for each of the top 50 assets: rank, coin icon, name, symbol, and current price in EUR, and does not show 24h change, market cap, or volume.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -235,6 +251,12 @@
     {
       "id": "AR-6",
       "summary": "Change default auto-refresh interval to 5 minutes and add a UI control to switch refresh interval presets: 1m, 5min, 15min, 30min.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add a new UI tab/view that displays only the cryptocurrency prices (without the full table details).",
       "reqIds": [],
       "status": "pending"
     }

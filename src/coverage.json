@@ -1,61 +1,40 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T21:04:20.189Z",
+  "generatedAt": "2026-02-08T21:24:29.076Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 4,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-20",
-        "summary": "Change the default crypto market data auto-refresh interval from 5 seconds to 5 minutes (300000ms) when `VITE_CRYPTO_REFRESH_INTERVAL_MS` is unset or empty.",
+        "id": "REQ-24",
+        "summary": "Add a tabbed view to the crypto dashboard so users can switch between (1) the existing full market table view and (2) a new \"Prices\" view that displays only cryptocurrency prices.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/crypto/cryptoRefreshInterval.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/crypto/cryptoRefreshInterval.ts"
-        ]
-      },
-      {
-        "id": "REQ-21",
-        "summary": "Add a user-facing refresh interval control to the crypto dashboard UI that lets the user pick one of these presets: 1m, 5m, 15m, 30m.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
-          "frontend/src/features/crypto/useCryptoMarketData.ts",
-          "frontend/src/features/crypto/CryptoDashboard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
-          "frontend/src/features/crypto/useCryptoMarketData.ts",
-          "frontend/src/features/crypto/CryptoDashboard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-22",
-        "summary": "Ensure the dashboard subtitle refresh-interval text reflects the effective refresh interval after the user selects a preset (not just the environment-configured value).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/crypto/CryptoDashboard.tsx"
+          "frontend/src/features/crypto/CryptoDashboard.tsx",
+          "frontend/src/features/crypto/DashboardTabs.tsx"
         ],
         "matchedFiles": [
           "frontend/src/features/crypto/CryptoDashboard.tsx"
         ]
       },
       {
-        "id": "REQ-23",
-        "summary": "Update `frontend/.env.example` documentation so the documented default refresh interval matches the new 5-minute default, and include an example for setting 5 minutes explicitly.",
+        "id": "REQ-25",
+        "summary": "Implement the new \"Prices\" tab content to show a compact list that displays, for each of the top 50 assets: rank, coin icon, name, symbol, and current price in EUR, and does not show 24h change, market cap, or volume.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/.env.example"
+          "frontend/src/features/crypto/CryptoPricesList.tsx",
+          "frontend/src/features/crypto/formatters.ts",
+          "frontend/src/features/crypto/CryptoDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/.env.example"
+          "frontend/src/features/crypto/CryptoPricesList.tsx",
+          "frontend/src/features/crypto/formatters.ts",
+          "frontend/src/features/crypto/CryptoDashboard.tsx"
         ]
       }
     ]
@@ -65,11 +44,9 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/.env.example",
     "frontend/src/features/crypto/CryptoDashboard.tsx",
-    "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
-    "frontend/src/features/crypto/cryptoRefreshInterval.ts",
-    "frontend/src/features/crypto/useCryptoMarketData.ts",
+    "frontend/src/features/crypto/CryptoPricesList.tsx",
+    "frontend/src/features/crypto/formatters.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

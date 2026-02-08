@@ -1,89 +1,70 @@
 {
   "kind": "build_request",
-  "title": "Change default crypto auto-refresh interval to 5 minutes and add preset interval selector",
+  "title": "Add a 'Prices only' tab to the crypto dashboard",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-20",
-      "text": "Change the default crypto market data auto-refresh interval from 5 seconds to 5 minutes (300000ms) when `VITE_CRYPTO_REFRESH_INTERVAL_MS` is unset or empty.",
+      "id": "REQ-24",
+      "text": "Add a tabbed view to the crypto dashboard so users can switch between (1) the existing full market table view and (2) a new \"Prices\" view that displays only cryptocurrency prices.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-1"
+          "msg-6"
         ],
         "quotes": [
-          "muuda default intervall 5min peale. ja lisa nupp kus on variandid 1m, 5min, 15min, 30min"
+          "lisa \"tab\", kus kuvatakse ainult nende hindasi"
         ]
       },
       "acceptanceCriteria": [
-        "If `VITE_CRYPTO_REFRESH_INTERVAL_MS` is not set (or is an empty string), the app uses a 300000ms refresh interval.",
-        "Existing validation behavior remains: if `VITE_CRYPTO_REFRESH_INTERVAL_MS` is set but invalid (non-numeric, non-integer, or < 1000), the app throws a clear developer-facing error."
+        "The dashboard UI includes a clear tab control with two tabs labeled in English (e.g., \"Overview\" and \"Prices\").",
+        "Switching tabs does not trigger a separate network request; both tabs reuse the existing `useCryptoMarketData` query result.",
+        "The refresh interval selector and the loading spinner remain available and behave the same regardless of which tab is selected.",
+        "The existing table view is preserved and remains the default selected tab on page load (unless otherwise specified in code)."
       ]
     },
     {
-      "id": "REQ-21",
-      "text": "Add a user-facing refresh interval control to the crypto dashboard UI that lets the user pick one of these presets: 1m, 5m, 15m, 30m.",
+      "id": "REQ-25",
+      "text": "Implement the new \"Prices\" tab content to show a compact list that displays, for each of the top 50 assets: rank, coin icon, name, symbol, and current price in EUR, and does not show 24h change, market cap, or volume.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-1"
+          "msg-6"
         ],
         "quotes": [
-          "lisa nupp kus on variandid 1m, 5min, 15min, 30min"
+          "lisa \"tab\", kus kuvatakse ainult nende hindasi"
         ]
       },
       "acceptanceCriteria": [
-        "A control (button or button group) is visible on the dashboard with the preset options labeled in English exactly: \"1m\", \"5m\", \"15m\", \"30m\".",
-        "Selecting a preset immediately changes the React Query refetch interval used by `useCryptoMarketData` without requiring a page reload.",
-        "The selected preset is visually indicated (e.g., active/selected styling) and is keyboard accessible."
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "text": "Ensure the dashboard subtitle refresh-interval text reflects the effective refresh interval after the user selects a preset (not just the environment-configured value).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-1"
-        ],
-        "quotes": [
-          "muuda default intervall 5min peale. ja lisa nupp kus on variandid 1m, 5min, 15min, 30min"
-        ]
-      },
-      "acceptanceCriteria": [
-        "After selecting a preset, the subtitle displays the new interval in seconds (e.g., 60s, 300s, 900s, 1800s) and matches the actual refetch behavior.",
-        "When no preset has been selected, the subtitle reflects the env/default-derived interval."
-      ]
-    },
-    {
-      "id": "REQ-23",
-      "text": "Update `frontend/.env.example` documentation so the documented default refresh interval matches the new 5-minute default, and include an example for setting 5 minutes explicitly.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-1"
-        ],
-        "quotes": [
-          "muuda default intervall 5min peale."
-        ]
-      },
-      "acceptanceCriteria": [
-        "`frontend/.env.example` states the default as 300000 (5 minutes) instead of 5000 (5 seconds).",
-        "`frontend/.env.example` includes an example line for `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000`."
+        "The \"Prices\" tab shows a vertical list (or similarly compact layout) of the same top 50 assets currently used by the dashboard.",
+        "Each list row includes: market cap rank, coin image (with the existing placeholder behavior when image fails), asset name, symbol, and the formatted EUR price.",
+        "No columns/fields for 24h change, market cap, or volume are shown in the \"Prices\" view.",
+        "All user-facing labels/text added for this feature are in English.",
+        "The \"Failed to load market data\" error state remains correct and is shown consistently for both tabs."
       ]
     }
   ],
   "constraints": [
-    "Keep all user-facing UI text in English.",
-    "Do not edit any files under `frontend/src/components/ui` or other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Maintain the existing single-page dashboard behavior (top 50 by market cap, prices in EUR, existing table fields)."
+    "Frontend changes must not modify any files under `frontend/src/components/ui` (compose existing UI components instead).",
+    "Keep the backend as-is (single Motoko actor); this feature should be implemented purely in the frontend.",
+    "Keep existing dashboard behavior (top 50 by market cap rank, EUR pricing, refresh interval control, dark mode) unchanged outside of adding the new tab/view."
   ],
   "nonGoals": [
-    "Do not change backend canister interfaces or add backend persistence for the refresh interval selection.",
-    "Do not introduce new data providers or change the crypto market data API as part of this request."
+    "Changing the market data provider or API endpoints.",
+    "Adding new filters, sorting controls, searching, favorites, or watchlists.",
+    "Adding persistence of selected tab across reloads (unless it is already trivial/implicit in the existing state management)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }
