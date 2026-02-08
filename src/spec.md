@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Switch the crypto dashboard market data provider from CoinCap to CoinPaprika, including API key configuration, while keeping the dashboard behavior and data shape unchanged.
+**Goal:** Update the crypto dashboard auto-refresh behavior to default to 5 minutes and let users choose a preset refresh interval from the UI.
 
 **Planned changes:**
-- Update `frontend/src/features/crypto/useCryptoMarketData.ts` to fetch the top 50 assets from CoinPaprika (EUR pricing) and keep React Query auto-refresh at 5 seconds.
-- Add configurable CoinPaprika API key support and fail fast with a clear developer-facing error when the key is missing/empty (no fallback provider).
-- Maintain the existing `CryptoAsset` return shape for `CryptoDashboard`, including robust mapping and a safe fallback for missing/broken asset images to prevent layout breaks or crashes.
+- Change the default `VITE_CRYPTO_REFRESH_INTERVAL_MS` fallback from 5 seconds to 5 minutes (300000ms) when the env var is unset or empty, while keeping the existing invalid-value error behavior.
+- Add a dashboard refresh-interval preset selector with options labeled exactly: "1m", "5m", "15m", "30m", with visible selected state and keyboard accessibility.
+- Make the effective interval used by `useCryptoMarketData` update immediately when a preset is selected (no reload required).
+- Update the dashboard subtitle to display the effective refresh interval (in seconds) reflecting either the env/default value or the user-selected preset.
+- Update `frontend/.env.example` to document the new 5-minute default and include an explicit example `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000`.
 
-**User-visible outcome:** The crypto dashboard continues to show a EUR-priced table of the top 50 assets (#1–#50) refreshing every 5 seconds, now powered by CoinPaprika, with stable rendering even when some assets have missing logos.
+**User-visible outcome:** The dashboard refreshes every 5 minutes by default, and users can switch refresh frequency to 1m/5m/15m/30m from an on-page control with the subtitle reflecting the current effective interval.

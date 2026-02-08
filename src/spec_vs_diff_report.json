@@ -1,33 +1,17 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T20:29:39.562Z",
-  "summary": "The diff switches the market data hook to CoinPaprika with EUR quotes, keeps React Query 5s refetch, returns the expected CryptoAsset fields, and adds runtime API-key validation with explicit error messages. Image fallback/robustness appears only partially implemented: a placeholder constant exists, but the mapping always returns a constructed CoinPaprika logo URL and the truncated dashboard diff does not show a confirmed onError fallback usage.",
-  "missing_requirements": [
-    {
-      "id": "REQ-12",
-      "requirement": "Update the CoinPaprika-to-CryptoAsset mapping to ensure robust behavior when optional fields are missing (e.g., missing logo/image): provide a safe fallback image URL or a deterministic placeholder so the table does not break layout or crash on missing images.",
-      "reason": "The mapping function always sets `image` to a derived CoinPaprika static URL and does not apply a fallback/placeholder when an image/logo is unavailable. Although a `PLACEHOLDER_IMAGE` constant exists, it is not used in the mapper shown, and the dashboard code is truncated before confirming an <img> onError fallback is wired.",
-      "evidence": [
-        "frontend/src/features/crypto/useCryptoMarketData.ts",
-        "frontend/src/features/crypto/CryptoDashboard.tsx (truncated)"
-      ]
-    }
-  ],
-  "hallucinated_features": [
-    {
-      "description": "Debug logging to the browser console for successful fetches and errors.",
-      "reason": "The BuildRequest does not ask for console logging; it only specifies switching providers and configuration/error handling behavior.",
-      "evidence": [
-        "frontend/src/features/crypto/useCryptoMarketData.ts"
-      ]
-    }
-  ],
-  "confidence": 0.68,
+  "generatedAt": "2026-02-08T21:04:20.186Z",
+  "summary": "All four requested frontend requirements appear implemented: default refresh interval now falls back to 300000ms with validation preserved, a preset interval selector (1m/5m/15m/30m) is added and wired to React Query refetchInterval without reload, the subtitle reflects the effective interval after selection, and .env.example documentation is updated accordingly.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.86,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/.env.example",
     "frontend/src/features/crypto/CryptoDashboard.tsx",
+    "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
+    "frontend/src/features/crypto/cryptoRefreshInterval.ts",
     "frontend/src/features/crypto/useCryptoMarketData.ts",
     "project_state.json"
   ]

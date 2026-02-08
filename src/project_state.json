@@ -1,10 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 15,
   "summary": "Web app that displays real-time cryptocurrency prices: top 50 coins sorted by market cap, shown in EUR, auto-refreshing every 5 seconds.",
   "architectural_notes": [
     "Market data provider should not depend on CoinGecko unauthenticated endpoints; choose an API that either does not require an API key or supports configurable API keys via environment/config.",
-    "Decision: switch market data provider to CoinPaprika (CORS-supported) even though it requires an API key; API key must be configurable via environment/config and not hardcoded in the frontend."
+    "Decision: switch market data provider to CoinPaprika (CORS-supported) even though it requires an API key; API key must be configurable via environment/config and not hardcoded in the frontend.",
+    "Decision: default crypto market data refresh interval should be 5 minutes (300000ms) when no override is provided.",
+    "Add a user-facing refresh interval selector with preset options (1m, 5m, 15m, 30m) that updates the polling interval at runtime."
   ],
   "known_issues": [
     "Deployment/build process encountered an error (deployment failed).",
@@ -12,7 +14,7 @@
     "Prior attempted alternative provider (e.g., CoinRanking) may fail in-browser due to missing CORS support, causing 'Failed to fetch'.",
     "CoinPaprika integration requires an API key; missing/incorrect configuration will keep market data failing."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-a-single-page-web-ui-that-displays-a-table-of-the-top-50-cryptocurrencies-ranked-by-market-capitalization-with-all-prices-shown-in-eur",
@@ -109,6 +111,94 @@
         "REQ-12"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-coinpaprika-market-data-integration-in-frontend-src-features-crypto-usecryptomarketdata-ts-with-an-alternative-free-public-cryptocurrency-market-data-rest-api-that-1-does-not-require-an-api-key-2-works-in-browser-with-cors-and-3-still-supports-showing-the-top-50-cryptocurrencies-ranked-by-market-cap-with-prices-in-eur-auto-refreshing-every-5-seconds",
+      "title": "Replace the current CoinPaprika market data integration in `frontend/src/features/crypto/useCryptoMarketData.ts` with an alternative free public cryptocurrency market data REST API that (1) does not require an API key, (2) works in-browser with CORS, and (3) still supports showing the top 50 cryptocurrencies ranked by market cap with prices in EUR, auto-refreshing every 5 seconds.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-coinpaprika-api-key-validation-and-coinpaprika-specific-error-messaging-from-the-ui-flow-so-the-user-never-sees-instructions-to-set-vite-coinpaprika-api-key-after-switching-providers-keep-all-user-facing-text-in-english",
+      "title": "Remove CoinPaprika API key validation and CoinPaprika-specific error messaging from the UI flow so the user never sees instructions to set `VITE_COINPAPRIKA_API_KEY` after switching providers; keep all user-facing text in English.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-env-example-to-remove-the-coinpaprika-api-key-variable-or-clearly-mark-it-as-not-used-after-migrating-to-the-new-no-key-provider-so-local-setup-instructions-match-the-new-implementation",
+      "title": "Update `frontend/.env.example` to remove the CoinPaprika API key variable (or clearly mark it as not used) after migrating to the new no-key provider, so local setup instructions match the new implementation.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-crypto-market-data-auto-refresh-interval-configurable-instead-of-hard-coded-5000ms-by-reading-a-frontend-environment-variable-e-g-vite-crypto-refresh-interval-ms-with-a-safe-default-of-5000ms-when-unset",
+      "title": "Make the crypto market data auto-refresh interval configurable (instead of hard-coded 5000ms) by reading a frontend environment variable (e.g., `VITE_CRYPTO_REFRESH_INTERVAL_MS`) with a safe default of 5000ms when unset.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-validate-the-configured-refresh-interval-value-and-fail-fast-with-a-clear-developer-facing-error-if-it-is-missing-non-numeric-or-outside-a-reasonable-range-e-g-less-than-1000ms",
+      "title": "Validate the configured refresh interval value and fail fast with a clear developer-facing error if it is missing, non-numeric, or outside a reasonable range (e.g., less than 1000ms).",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-subtitle-text-to-reflect-the-actual-configured-refresh-interval-in-seconds-instead-of-the-hard-coded-auto-refresh-every-5s",
+      "title": "Update the dashboard subtitle text to reflect the actual configured refresh interval (in seconds) instead of the hard-coded \"Auto-refresh every 5s\".",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-document-the-new-refresh-interval-configuration-in-frontend-env-example-by-adding-the-environment-variable-with-a-brief-comment-describing-that-it-controls-the-market-data-refresh-interval-in-milliseconds-and-defaults-to-5000ms",
+      "title": "Document the new refresh-interval configuration in `frontend/.env.example` by adding the environment variable with a brief comment describing that it controls the market data refresh interval in milliseconds and defaults to 5000ms.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-default-crypto-market-data-auto-refresh-interval-from-5-seconds-to-5-minutes-300000ms-when-vite-crypto-refresh-interval-ms-is-unset-or-empty",
+      "title": "Change the default crypto market data auto-refresh interval from 5 seconds to 5 minutes (300000ms) when `VITE_CRYPTO_REFRESH_INTERVAL_MS` is unset or empty.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-user-facing-refresh-interval-control-to-the-crypto-dashboard-ui-that-lets-the-user-pick-one-of-these-presets-1m-5m-15m-30m",
+      "title": "Add a user-facing refresh interval control to the crypto dashboard UI that lets the user pick one of these presets: 1m, 5m, 15m, 30m.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-dashboard-subtitle-refresh-interval-text-reflects-the-effective-refresh-interval-after-the-user-selects-a-preset-not-just-the-environment-configured-value",
+      "title": "Ensure the dashboard subtitle refresh-interval text reflects the effective refresh interval after the user selects a preset (not just the environment-configured value).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-env-example-documentation-so-the-documented-default-refresh-interval-matches-the-new-5-minute-default-and-include-an-example-for-setting-5-minutes-explicitly",
+      "title": "Update `frontend/.env.example` documentation so the documented default refresh interval matches the new 5-minute default, and include an example for setting 5 minutes explicitly.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -127,6 +217,24 @@
     {
       "id": "AR-3",
       "summary": "Add a user-facing Dark Mode theme toggle for the dashboard UI.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Find and switch to an alternative free cryptocurrency market data API that does not require an API key (and works in-browser with CORS), replacing CoinPaprika to restore market data fetching.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Allow changing the auto-refresh interval (currently 5 seconds), e.g., make it configurable or adjustable without code changes.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Change default auto-refresh interval to 5 minutes and add a UI control to switch refresh interval presets: 1m, 5min, 15min, 30min.",
       "reqIds": [],
       "status": "pending"
     }

@@ -1,84 +1,89 @@
 {
   "kind": "build_request",
-  "title": "Switch crypto market data provider to CoinPaprika (with API key support)",
+  "title": "Change default crypto auto-refresh interval to 5 minutes and add preset interval selector",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-10",
-      "text": "Replace the current CoinCap-based market data fetch in `frontend/src/features/crypto/useCryptoMarketData.ts` with CoinPaprika as the data provider, while keeping the existing dashboard behavior unchanged (top 50 by market cap rank, prices shown in EUR, auto-refresh every 5 seconds) and continuing to return the existing `CryptoAsset` shape consumed by `CryptoDashboard`.",
+      "id": "REQ-20",
+      "text": "Change the default crypto market data auto-refresh interval from 5 seconds to 5 minutes (300000ms) when `VITE_CRYPTO_REFRESH_INTERVAL_MS` is unset or empty.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user"
+          "msg-user-1"
         ],
         "quotes": [
-          "Kasuta CoinPaprika"
+          "muuda default intervall 5min peale. ja lisa nupp kus on variandid 1m, 5min, 15min, 30min"
         ]
       },
       "acceptanceCriteria": [
-        "The dashboard continues to render a table of 50 assets sorted by market cap rank (#1–#50).",
-        "All displayed monetary values remain in EUR.",
-        "React Query continues to refetch market data every 5 seconds while the page is open.",
-        "`useCryptoMarketData()` still returns an array of `CryptoAsset` objects with fields: id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image."
+        "If `VITE_CRYPTO_REFRESH_INTERVAL_MS` is not set (or is an empty string), the app uses a 300000ms refresh interval.",
+        "Existing validation behavior remains: if `VITE_CRYPTO_REFRESH_INTERVAL_MS` is set but invalid (non-numeric, non-integer, or < 1000), the app throws a clear developer-facing error."
       ]
     },
     {
-      "id": "REQ-11",
-      "text": "Add configurable CoinPaprika API key support for the frontend market data request(s), and fail fast with a clear, developer-facing error message when the API key is missing or empty (do not silently fall back to another provider).",
+      "id": "REQ-21",
+      "text": "Add a user-facing refresh interval control to the crypto dashboard UI that lets the user pick one of these presets: 1m, 5m, 15m, 30m.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user"
+          "msg-user-1"
         ],
         "quotes": [
-          "Kasuta CoinPaprika"
+          "lisa nupp kus on variandid 1m, 5min, 15min, 30min"
         ]
       },
       "acceptanceCriteria": [
-        "When the API key is missing/empty at runtime, the app surfaces an explicit error that indicates an API key is required for CoinPaprika (no generic \"Failed to fetch\" only).",
-        "When a valid API key is provided, the browser request succeeds without CORS errors and the table populates with live data.",
-        "No user-facing UI copy is added in any language other than English."
+        "A control (button or button group) is visible on the dashboard with the preset options labeled in English exactly: \"1m\", \"5m\", \"15m\", \"30m\".",
+        "Selecting a preset immediately changes the React Query refetch interval used by `useCryptoMarketData` without requiring a page reload.",
+        "The selected preset is visually indicated (e.g., active/selected styling) and is keyboard accessible."
       ]
     },
     {
-      "id": "REQ-12",
-      "text": "Update the CoinPaprika-to-`CryptoAsset` mapping to ensure robust behavior when optional fields are missing (e.g., missing logo/image): provide a safe fallback image URL or a deterministic placeholder so the table does not break layout or crash on missing images.",
+      "id": "REQ-22",
+      "text": "Ensure the dashboard subtitle refresh-interval text reflects the effective refresh interval after the user selects a preset (not just the environment-configured value).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user"
+          "msg-user-1"
         ],
         "quotes": [
-          "Kasuta CoinPaprika"
+          "muuda default intervall 5min peale. ja lisa nupp kus on variandid 1m, 5min, 15min, 30min"
         ]
       },
       "acceptanceCriteria": [
-        "If an asset image URL is missing or fails to load, the UI still renders rows without throwing errors.",
-        "All rows in the table remain visually aligned even when some assets have no provider logo available."
+        "After selecting a preset, the subtitle displays the new interval in seconds (e.g., 60s, 300s, 900s, 1800s) and matches the actual refetch behavior.",
+        "When no preset has been selected, the subtitle reflects the env/default-derived interval."
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "text": "Update `frontend/.env.example` documentation so the documented default refresh interval matches the new 5-minute default, and include an example for setting 5 minutes explicitly.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "muuda default intervall 5min peale."
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/.env.example` states the default as 300000 (5 minutes) instead of 5000 (5 seconds).",
+        "`frontend/.env.example` includes an example line for `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000`."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under `frontend/src/components/ui` (compose existing UI components instead).",
-    "Do not modify files listed in SYSTEM_CONTEXT `frontend.immutablePaths`.",
-    "Backend remains a single Motoko actor; no additional backend services."
+    "Keep all user-facing UI text in English.",
+    "Do not edit any files under `frontend/src/components/ui` or other paths listed as immutable in SYSTEM_CONTEXT.",
+    "Maintain the existing single-page dashboard behavior (top 50 by market cap, prices in EUR, existing table fields)."
   ],
   "nonGoals": [
-    "Adding new dashboard features beyond switching the market data provider and required configuration/error handling.",
-    "Changing refresh cadence, currency display (EUR), or the table columns/layout beyond what is required to keep the app working with CoinPaprika."
+    "Do not change backend canister interfaces or add backend persistence for the refresh interval selection.",
+    "Do not introduce new data providers or change the crypto market data API as part of this request."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

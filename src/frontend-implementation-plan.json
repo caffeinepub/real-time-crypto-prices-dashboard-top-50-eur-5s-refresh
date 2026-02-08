@@ -1,63 +1,76 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Switch crypto market data provider to CoinPaprika (API key + resilient images)",
+  "title": "Crypto dashboard refresh interval: 5-minute default + preset selector",
   "requirements": [
     {
-      "id": "REQ-10",
-      "summary": "Replace CoinCap fetch with CoinPaprika while preserving current dashboard behavior and returning the existing CryptoAsset shape.",
+      "id": "REQ-20",
+      "summary": "Update env-derived crypto auto-refresh interval default to 5 minutes when unset/empty while preserving existing invalid-value errors.",
       "acceptanceCriteria": [
-        "The dashboard continues to render a table of 50 assets sorted by market cap rank (#1–#50).",
-        "All displayed monetary values remain in EUR.",
-        "React Query continues to refetch market data every 5 seconds while the page is open.",
-        "`useCryptoMarketData()` still returns an array of `CryptoAsset` objects with fields: id, symbol, name, current_price, market_cap, market_cap_rank, price_change_percentage_24h, total_volume, image."
+        "If `VITE_CRYPTO_REFRESH_INTERVAL_MS` is not set (or is an empty string), the app uses a 300000ms refresh interval.",
+        "Existing validation behavior remains: if `VITE_CRYPTO_REFRESH_INTERVAL_MS` is set but invalid (non-numeric, non-integer, or < 1000), the app throws a clear developer-facing error."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/crypto/useCryptoMarketData.ts",
+          "path": "frontend/src/features/crypto/cryptoRefreshInterval.ts",
           "operation": "modify",
-          "description": "Replace the CoinCap provider implementation with CoinPaprika-based fetching and mapping while keeping: (1) top 50 assets by market cap rank, (2) EUR pricing fields, (3) React Query refetchInterval=5000 behavior, and (4) the returned `CryptoAsset[]` shape consumed by `CryptoDashboard`."
+          "description": "Change DEFAULT_REFRESH_INTERVAL_MS from 5000 to 300000 (5 minutes) for the unset/empty env-var case, keeping the existing numeric/integer/minimum validation and developer-facing error messages intact."
         }
       ]
     },
     {
-      "id": "REQ-11",
-      "summary": "Add configurable CoinPaprika API key support and fail fast with a clear developer-facing error when missing/empty.",
+      "id": "REQ-21",
+      "summary": "Add a preset refresh interval selector (1m/5m/15m/30m) to the crypto dashboard that updates React Query refetch behavior immediately and accessibly.",
       "acceptanceCriteria": [
-        "When the API key is missing/empty at runtime, the app surfaces an explicit error that indicates an API key is required for CoinPaprika (no generic \"Failed to fetch\" only).",
-        "When a valid API key is provided, the browser request succeeds without CORS errors and the table populates with live data.",
-        "No user-facing UI copy is added in any language other than English."
+        "A control (button or button group) is visible on the dashboard with the preset options labeled in English exactly: \"1m\", \"5m\", \"15m\", \"30m\".",
+        "Selecting a preset immediately changes the React Query refetch interval used by `useCryptoMarketData` without requiring a page reload.",
+        "The selected preset is visually indicated (e.g., active/selected styling) and is keyboard accessible."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/crypto/useCryptoMarketData.ts",
-          "operation": "modify",
-          "description": "Add environment-driven API key support (e.g., via a Vite-style `import.meta.env` value) to the CoinPaprika request(s). Validate at runtime and throw a clear, developer-facing Error when the key is missing or empty; do not fall back to any other provider."
+          "path": "frontend/src/features/crypto/RefreshIntervalSelector.tsx",
+          "operation": "create",
+          "description": "Create a dashboard-scoped refresh-interval selector component that renders preset options labeled exactly \"1m\", \"5m\", \"15m\", \"30m\" and exposes a controlled value/onChange API. Implement keyboard-accessible selection (e.g., radiogroup semantics with focus/active styling) using Tailwind classes (do not edit immutable `frontend/src/components/ui/*`)."
         },
         {
-          "path": "frontend/.env.example",
-          "operation": "create",
-          "description": "Add an example environment file documenting the required CoinPaprika API key variable name and a short English-only note that the app will error at runtime if it is missing/empty."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Harden CoinPaprika-to-CryptoAsset image handling with safe fallbacks so missing/broken logos do not break layout or crash.",
-      "acceptanceCriteria": [
-        "If an asset image URL is missing or fails to load, the UI still renders rows without throwing errors.",
-        "All rows in the table remain visually aligned even when some assets have no provider logo available."
-      ],
-      "file_operations": [
-        {
           "path": "frontend/src/features/crypto/useCryptoMarketData.ts",
           "operation": "modify",
-          "description": "Update the CoinPaprika-to-`CryptoAsset` mapping to always provide a deterministic, safe `image` URL string (provider logo when available; otherwise a stable placeholder) so consumers never receive undefined/null image values."
+          "description": "Update `useCryptoMarketData` to accept an optional override refresh interval (ms). When provided, use it for React Query `refetchInterval`/`staleTime` so changes take effect immediately on re-render; otherwise fall back to the env/default-derived interval via `getEffectiveRefreshInterval()`."
         },
         {
           "path": "frontend/src/features/crypto/CryptoDashboard.tsx",
           "operation": "modify",
-          "description": "Add robust image rendering behavior for each row (e.g., an `onError` handler to switch to the placeholder image) to prevent runtime errors and keep table row alignment consistent when logos are missing or fail to load."
+          "description": "Wire the new selector into the dashboard header area: hold selected preset interval in React state, pass it into `useCryptoMarketData(selectedIntervalMs)`, and visually indicate the active preset. Ensure all user-facing labels remain English and match the required preset text exactly."
+        }
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "summary": "Make the dashboard subtitle reflect the effective refresh interval (preset override when selected, otherwise env/default).",
+      "acceptanceCriteria": [
+        "After selecting a preset, the subtitle displays the new interval in seconds (e.g., 60s, 300s, 900s, 1800s) and matches the actual refetch behavior.",
+        "When no preset has been selected, the subtitle reflects the env/default-derived interval."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/crypto/CryptoDashboard.tsx",
+          "operation": "modify",
+          "description": "Change subtitle interval computation to derive from the effective interval used by the query: use the selected preset (if any) converted to seconds for display; otherwise use `getEffectiveRefreshIntervalSeconds()`. Ensure the displayed seconds match the refetch interval passed to `useCryptoMarketData`."
+        }
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "summary": "Update `.env.example` to document the new 5-minute default and provide an explicit 5-minute example value.",
+      "acceptanceCriteria": [
+        "`frontend/.env.example` states the default as 300000 (5 minutes) instead of 5000 (5 seconds).",
+        "`frontend/.env.example` includes an example line for `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000`."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/.env.example",
+          "operation": "modify",
+          "description": "Update refresh interval documentation: set documented default to 300000 (5 minutes) and add an explicit example line `VITE_CRYPTO_REFRESH_INTERVAL_MS=300000` (keep all text in English)."
         }
       ]
     }

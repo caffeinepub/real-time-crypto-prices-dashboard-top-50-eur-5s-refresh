@@ -1,4 +1,6 @@
 import { useCryptoMarketData } from './useCryptoMarketData';
+import { getEffectiveRefreshIntervalSeconds } from './cryptoRefreshInterval';
+import { RefreshIntervalSelector } from './RefreshIntervalSelector';
 import { TrendingUp, TrendingDown, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -10,8 +12,13 @@ import { useState } from 'react';
 const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"%3E%3Ccircle cx="16" cy="16" r="16" fill="%23e5e7eb"/%3E%3Ctext x="16" y="20" font-family="Arial" font-size="14" fill="%239ca3af" text-anchor="middle"%3E%3F%3C/text%3E%3C/svg%3E';
 
 export function CryptoDashboard() {
-    const { data: cryptoData, isLoading, isError, error } = useCryptoMarketData();
+    const [selectedIntervalMs, setSelectedIntervalMs] = useState<number | null>(null);
+    const { data: cryptoData, isLoading, isError, error } = useCryptoMarketData(selectedIntervalMs ?? undefined);
     const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+    
+    const effectiveIntervalSeconds = selectedIntervalMs 
+        ? selectedIntervalMs / 1000 
+        : getEffectiveRefreshIntervalSeconds();
 
     const handleImageError = (assetId: string) => {
         setImageErrors(prev => new Set(prev).add(assetId));
@@ -24,7 +31,7 @@ export function CryptoDashboard() {
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Failed to load market data</AlertTitle>
                     <AlertDescription>
-                        {error instanceof Error ? error.message : 'Unable to fetch cryptocurrency data. Please try again later.'}
+                        Unable to fetch cryptocurrency data. Please check your internet connection and try again later.
                     </AlertDescription>
                 </Alert>
             </div>
@@ -35,16 +42,22 @@ export function CryptoDashboard() {
         <div className="container mx-auto py-8 px-4">
             <Card>
                 <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <div>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
                             <CardTitle className="text-3xl font-bold">Crypto Market Dashboard</CardTitle>
                             <CardDescription className="mt-2">
-                                Top 50 cryptocurrencies by market cap • Prices in EUR • Auto-refresh every 5s
+                                Top 50 cryptocurrencies by market cap • Prices in EUR • Auto-refresh every {effectiveIntervalSeconds}s
                             </CardDescription>
                         </div>
-                        {isLoading && (
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                        )}
+                        <div className="flex items-center gap-4">
+                            <RefreshIntervalSelector 
+                                value={selectedIntervalMs}
+                                onChange={setSelectedIntervalMs}
+                            />
+                            {isLoading && (
+                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                            )}
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
